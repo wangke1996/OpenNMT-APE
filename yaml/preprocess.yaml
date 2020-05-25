@@ -1,0 +1,18 @@
+train_src: /data/wangke/wmt20/data/raw/train/src_mt.txt
+train_tgt: /data/wangke/wmt20/data/raw/train/pe.txt
+
+valid_src: /data/wangke/wmt20/data/raw/2020/dev/src_mt.txt
+valid_tgt: /data/wangke/wmt20/data/raw/2020/dev/pe.txt
+
+save_data: /data/wangke/wmt20/data/torch_data/train/data
+
+src_vocab_size: 200000
+tgt_vocab_size: 200000
+
+shard_size: 0 # same as sample buffer size in tf version, 0 means all
+
+bert_src: bert-base-multilingual-cased
+bert_tgt: bert-base-multilingual-cased
+
+src_seq_length: 140
+tgt_seq_length: 70

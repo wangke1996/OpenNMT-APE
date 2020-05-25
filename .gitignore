@@ -1,5 +1,5 @@
 # repo-specific stuff
-pred.txt
+pred*.txt*
 multi-bleu.perl
 *.pt
 \#*#
@@ -8,9 +8,10 @@ multi-bleu.perl
 .DS_Store
 data/
 .vscode
-
+*.yaml
 # Byte-compiled / optimized / DLL files
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 
