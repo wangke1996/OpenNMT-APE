@@ -11,6 +11,10 @@ tercom_shell = 'java -jar ../OpenNMT-tf/APEplusQE/3rd_party/tercom-0.7.25/tercom
 bleu_shell = 'tools/multi-bleu.perl'
 
 
+def extract_step(ckpt_path):
+    return int(re.search('step_[0-9]+', os.path.basename(ckpt_path)).group().split('_')[1])
+
+
 def compute_BLEU(mt_file, pe_file=pe_txt):
     result_tmp_file = mt_file + '.bleu.tmp'
     cmd = '%s %s < %s | head -n 1 >%s' % (bleu_shell, pe_file, mt_file, result_tmp_file)
@@ -58,11 +62,10 @@ def inference(ckpt, override=False, **kwargs):
     model_dir = os.path.dirname(ckpt)
     eval_dir = os.path.join(model_dir, 'eval')
     os.makedirs(eval_dir, exist_ok=True)
-    step = int(re.search('step_[0-9]+', os.path.basename(ckpt)).group().split('_')[1])
     params = {
         'model': ckpt,
         'src': src_mt_txt,
-        'output': os.path.join(eval_dir, 'predictions.txt.%d' % step),
+        'output': os.path.join(eval_dir, 'predictions.txt.%d' % extract_step(ckpt)),
         'gpu': -1,
         'beam_size': 4,
         'min_length': 2,
@@ -94,6 +97,7 @@ def main():
     parser.add_argument('--gpu', type=int, default=-1)
     args = parser.parse_args()
     ckpts = glob.glob('%s/*step_*.pt' % args.model_dir)
+    ckpts.sort(key=extract_step)
     ape_subwords = [inference(ckpt, override=False, gpu=args.gpu) for ckpt in ckpts]
     ape_txts = [recover_tokens(x, override=True) for x in ape_subwords]
     bleus = [compute_BLEU(x) for x in ape_txts]
